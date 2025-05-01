@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, Timestamp, updateDoc } from 'firebase/firestore';
 import { firestore } from '../../firebase/config';
 import { useAuth } from '../../contexts/AuthContext';
 import { format } from 'date-fns';
@@ -13,7 +13,8 @@ import {
   AlertTriangle, 
   PenTool as Tool,
   Play,
-  Check
+  Check,
+  Lock
 } from 'lucide-react';
 
 interface RequestCardProps {
@@ -26,6 +27,8 @@ interface RequestCardProps {
     isUrgent: boolean;
     date: string;
     specialInstructions?: string;
+    preferredProvider?: string;
+    providerName?: string;
   };
 }
 
@@ -34,8 +37,11 @@ const RequestCard = ({ request }: RequestCardProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
+  const isAssignedProvider = currentUser?.uid === request.preferredProvider;
+  const canInteract = request.status === 'pending' || isAssignedProvider;
+  
   const handleStatusUpdate = async (newStatus: string) => {
-    if (!currentUser) return;
+    if (!currentUser || !canInteract) return;
     
     try {
       setIsLoading(true);
@@ -60,6 +66,10 @@ const RequestCard = ({ request }: RequestCardProps) => {
       
       // Update local state
       request.status = newStatus;
+      if (newStatus === 'accepted') {
+        request.preferredProvider = currentUser.uid;
+        request.providerName = currentUser.displayName ?? undefined;
+      }
       
     } catch (err) {
       console.error('Error updating request:', err);
@@ -112,6 +122,19 @@ const RequestCard = ({ request }: RequestCardProps) => {
       );
     }
 
+    // If the request is accepted and current user is not the preferred provider
+    if (request.status !== 'pending' && !isAssignedProvider) {
+      return (
+        <button
+          disabled
+          className="flex-1 bg-neutral-200 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400 text-sm font-medium py-2 px-4 rounded-md cursor-not-allowed flex items-center justify-center"
+        >
+          <Lock size={16} className="mr-2" />
+          Assigned to {request.providerName}
+        </button>
+      );
+    }
+
     switch (request.status) {
       case 'pending':
         return (
@@ -123,23 +146,29 @@ const RequestCard = ({ request }: RequestCardProps) => {
           </button>
         );
       case 'accepted':
-        return (
-          <button
-            onClick={() => handleStatusUpdate('in-progress')}
-            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-md transition-colors"
-          >
-            Start Service
-          </button>
-        );
+        if (isAssignedProvider) {
+          return (
+            <button
+              onClick={() => handleStatusUpdate('in-progress')}
+              className="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-md transition-colors"
+            >
+              Start Service
+            </button>
+          );
+        }
+        return null;
       case 'in-progress':
-        return (
-          <button
-            onClick={() => handleStatusUpdate('completed')}
-            className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded-md transition-colors"
-          >
-            Mark as Completed
-          </button>
-        );
+        if (isAssignedProvider) {
+          return (
+            <button
+              onClick={() => handleStatusUpdate('completed')}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded-md transition-colors"
+            >
+              Mark as Completed
+            </button>
+          );
+        }
+        return null;
       default:
         return null;
     }
