@@ -1,89 +1,109 @@
-# 🛠️ Home Repair Services Website
+# Home Appliance Repair Service Provider Portal
 
-A modern web platform for booking and managing home repair and maintenance services. This project connects users with trusted service providers for tasks such as plumbing, electrical work, carpentry, and more.
+A React-based web application for service providers to manage repair requests from customers.
 
-🔗 **Live Site:** [home-repair-eight.vercel.app](https://home-repair-eight.vercel.app/)
 
----
+## 🔗 Live Demo
 
-## 🚀 Features
+Check out the deployed portal here: [fixit-pro.vercel.app](https://fixit-pro.vercel.app/)
 
-- 🔍 Browse and search for various home services
-- 🧑‍💼 Book services directly from the website
-- 📅 Manage service schedules
-- 🌐 Multilingual support (if applicable)
-- 💬 Help and support chatbot
-- 🔒 Authentication & authorization
-- 🎨 Responsive and modern UI using Tailwind CSS
 
----
+## Features
 
-## 🛠️ Tech Stack
+- Authentication system for service providers (login/signup)
+- Dashboard to view pending and accepted service requests
+- Request acceptance workflow
+- Profile management for service providers
+- Dark and light mode theming
+- Integration with Firebase Firestore
 
-| Tech         | Description                              |
-|--------------|------------------------------------------|
-| **Frontend** | React, TypeScript, Tailwind CSS          |
-| **Backend**  | Flask / Node.js (specify if applicable)  |
-| **Database** | Firebase Firestore / MongoDB             |
-| **Other**    | LangChain, Gemini API, Deep Translator   |
-| **Deployment** | Vercel                                 |
+## 🛠 Tech Stack
 
----
-
-## 📁 Folder Structure (Example)
-
-home-repair/ 
-├── backend/ # Flask backend
-
-│ ├── app/ 
-
-│ └── app.py # App runner
-
-│ ├── frontend/ # React frontend 
-
-│ ├── public/
-
-│ ├── src/
-
-│ │ ├── components/ # Reusable components (Navbar, Footer, etc.) 
-
-│ │ ├── pages/ # Pages (Home, Bookings, Help, etc.) 
-
-│ │ ├── context/ # Auth and Global Context Providers
-
-│ │ ├── hooks/ # Custom React hooks 
-
-│ │ ├── services/ # Axios/Fetch API calls to Flask backend
-
-│ │ ├── App.tsx 
-
-│ │ └── main.tsx 
-
-│ ├── tailwind.config.js 
-
-│ └── vite.config.ts 
-
-│ ├── README.md 
-
-└── package.json / requirements.txt
+- **Frontend:** React, TypeScript, Tailwind CSS, React Router
+- **State Management:** React Context API
+- **Authentication & Database:** Firebase Auth & Firestore
+- **Backend (Optional):** Flask (for advanced request/feedback handling)
 
 
 
 
+## Prerequisites
 
----
-
-## ⚙️ Installation & Setup
-
-### Prerequisites
-
-- Node.js ≥ 16.x
-- Python ≥ 3.9
+- Node.js (v14 or higher)
+- npm or yarn
 - Firebase account
-- Gemini API access
+- Firestore database setup
 
-### 1. Clone the Repository
+## Getting Started
+
+1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/home-repair.git
-cd home-repair
+git clone <repository-url>
+cd appliance-repair-service-provider
+```
+
+2. Install dependencies
+
+```bash
+npm install
+```
+
+3. Create a Firebase project
+
+- Go to [Firebase Console](https://console.firebase.google.com/)
+- Create a new project
+- Set up Firestore database
+- Enable Authentication with Email/Password method
+
+4. Configure environment variables
+
+- Copy the `.env.example` file to `.env`
+- Fill in your Firebase configuration details
+
+```bash
+cp .env.example .env
+```
+
+5. Start the development server
+
+```bash
+npm run dev
+```
+
+## Project Structure
+
+```
+├── public/
+├── src/
+│   ├── components/       # Reusable UI components
+│   ├── contexts/         # React contexts (auth, theme)
+│   ├── firebase/         # Firebase configuration
+│   ├── pages/            # Application pages
+│   ├── App.tsx           # Main app component
+│   ├── App.css           # Global styles
+│   ├── index.css         # Tailwind imports
+│   └── main.tsx          # Entry point
+├── package.json
+└── README.md
+```
+
+## Integrating with Customer Website
+
+See the `customer_integration_guide.md` file for detailed instructions on how to integrate this service provider portal with your existing customer website.
+
+## Backend Setup
+
+The backend is built with Flask and connects to Firebase Firestore:
+
+1. Navigate to the `flask_backend` directory
+2. Install requirements: `pip install -r requirements.txt`
+3. Add your Firebase service account JSON to the directory
+4. Start the server: `python app.py`
+
+## Available Scripts
+
+- `npm run dev` - Start the development server
+- `npm run build` - Build for production
+
+
