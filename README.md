@@ -34,7 +34,9 @@ A modern web platform for booking and managing home repair and maintenance servi
 
 home-repair/ 
 ├── backend/ # Flask backend
+
 │ ├── app/ 
+
 │ └── app.py # App runner
 │ ├── frontend/ # React frontend 
 │ ├── public/
