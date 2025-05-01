@@ -14,6 +14,7 @@ interface BookingRequest {
   isUrgent: boolean;
   date: string;
   specialInstructions?: string;
+  preferredProvider?: string;
 }
 
 const Requests = () => {
@@ -31,29 +32,48 @@ const Requests = () => {
         setLoading(true);
         setError(null);
         
-        let q = query(collection(firestore, 'bookings'));
-        
-        if (filter === 'pending') {
-          q = query(q, where('status', '==', 'pending'));
-        } else if (filter === 'in-progress') {
-          q = query(q, where('status', '==', 'in-progress'));
-        } else if (filter === 'completed') {
-          q = query(q, where('status', '==', 'completed'));
-        } else if (filter === 'urgent') {
-          q = query(q, where('isUrgent', '==', true));
-        }
-        
-        q = query(q, orderBy('createdAt', 'desc'));
-        
-        const querySnapshot = await getDocs(q);
+        // Base query to get either pending requests or requests assigned to current provider
+        let baseQuery = query(
+          collection(firestore, 'bookings'),
+          where('status', 'in', ['pending', 'accepted', 'in-progress', 'completed'])
+        );
+
+        // Get all documents that match the base query
+        const querySnapshot = await getDocs(baseQuery);
         const requestsData: BookingRequest[] = [];
         
+        // Filter the results based on status and provider
         querySnapshot.forEach((doc) => {
           const data = doc.data() as Omit<BookingRequest, 'id'>;
-          requestsData.push({ id: doc.id, ...data });
+          
+          // Include the request if:
+          // 1. It's pending (no preferred provider set) OR
+          // 2. Current user is the preferred provider
+          if (data.status === 'pending' || data.preferredProvider === currentUser.uid) {
+            requestsData.push({ id: doc.id, ...data });
+          }
         });
+
+        // Apply additional filters based on the selected filter
+        const filteredRequests = requestsData.filter(request => {
+          switch (filter) {
+            case 'pending':
+              return request.status === 'pending';
+            case 'in-progress':
+              return request.status === 'in-progress' && request.preferredProvider === currentUser.uid;
+            case 'completed':
+              return request.status === 'completed' && request.preferredProvider === currentUser.uid;
+            case 'urgent':
+              return (request.isUrgent && (request.status === 'pending' || request.preferredProvider === currentUser.uid));
+            default:
+              return true; // 'all' filter shows everything
+          }
+        });
+
+        // Sort by creation date
+        filteredRequests.sort((a, b) => b.createdAt.seconds - a.createdAt.seconds);
         
-        setRequests(requestsData);
+        setRequests(filteredRequests);
       } catch (err) {
         console.error('Error fetching requests:', err);
         setError('Failed to load service requests. Please try again later.');
