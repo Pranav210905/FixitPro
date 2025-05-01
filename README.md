@@ -38,19 +38,33 @@ home-repair/
 │ ├── app/ 
 
 │ └── app.py # App runner
+
 │ ├── frontend/ # React frontend 
+
 │ ├── public/
+
 │ ├── src/
+
 │ │ ├── components/ # Reusable components (Navbar, Footer, etc.) 
+
 │ │ ├── pages/ # Pages (Home, Bookings, Help, etc.) 
+
 │ │ ├── context/ # Auth and Global Context Providers
+
 │ │ ├── hooks/ # Custom React hooks 
+
 │ │ ├── services/ # Axios/Fetch API calls to Flask backend
+
 │ │ ├── App.tsx 
+
 │ │ └── main.tsx 
+
 │ ├── tailwind.config.js 
+
 │ └── vite.config.ts 
+
 │ ├── README.md 
+
 └── package.json / requirements.txt
 
 
