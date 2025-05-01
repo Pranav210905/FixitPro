@@ -90,7 +90,8 @@ npm run dev
 
 ## Integrating with Customer Website
 
-See the `customer_integration_guide.md` file for detailed instructions on how to integrate this service provider portal with your existing customer website.
+See the `customer_integration_guide.md` file for detailed instructions on how to integrate this service provider portal with your existing customer website.  
+check it only if you want to edit project
 
 ## Backend Setup
 
