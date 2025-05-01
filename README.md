@@ -1,4 +1,4 @@
-# Home Appliance Repair Service Provider Portal
+# FixitPro - Service Provider Portal
 
 A React-based web application for service providers to manage repair requests from customers.
 
